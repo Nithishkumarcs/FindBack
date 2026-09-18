@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FindBack — Lost &amp; Found Network</title>
+  <meta name="description" content="The easiest way to report lost items, return found belongings, and connect with your campus community." />
+  
+  <!-- Modern Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-group">
+        <div class="logo-icon">
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <div class="logo-text">Find<span>Back</span></div>
+      </a>
+
+      <div class="nav-actions">
+        <button id="btn-report-lost" class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-circle-exclamation" style="color: var(--lost-color);"></i>
+          <span class="btn-text-full">I Lost Something</span>
+          <span class="btn-text-short">Lost</span>
+        </button>
+        <button id="btn-report-found" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+          <span class="btn-text-full">I Found Something</span>
+          <span class="btn-text-short">Found</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Campus Lost &amp; Found, Made Simple</h1>
+      <p>Report what you lost, list what you found, and get automatically matched with genuine owners in seconds.</p>
+
+      <!-- Live Counters -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-dot lost"></span>
+          <span id="stat-lost">0</span> Lost
+        </div>
+        <div class="stat-item">
+          <span class="stat-dot found"></span>
+          <span id="stat-found">0</span> Found
+        </div>
+        <div class="stat-item">
+          <span class="stat-dot reunited"></span>
+          <span id="stat-reunited">0</span> Reunited
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="container" style="padding-top: 20px;">
+    
+    <!-- Smart Match Banner -->
+    <div id="match-alert-banner" class="match-alert-banner" style="display: none;">
+      <div class="match-alert-content">
+        <div class="match-alert-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <div id="match-alert-text">Smart Match suggestions detected!</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="document.querySelector('.tab-btn[data-tab=\'MATCHES\']').click()">
+        View Matches
+      </button>
+    </div>
+
+    <!-- Search & Category Filters -->
+    <div class="controls-card">
+      <div class="search-row">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="search-input" class="search-input" placeholder="Search by title, location (e.g., Library), keyword, or item name..." />
+        </div>
+      </div>
+
+      <!-- Quick Category Pills -->
+      <div class="category-pills">
+        <div class="pill active" data-cat="ALL"><i class="fa-solid fa-border-all"></i> All Categories</div>
+        <div class="pill" data-cat="Phone"><i class="fa-solid fa-mobile-screen"></i> Phones</div>
+        <div class="pill" data-cat="Wallet"><i class="fa-solid fa-wallet"></i> Wallets</div>
+        <div class="pill" data-cat="Keys"><i class="fa-solid fa-key"></i> Keys</div>
+        <div class="pill" data-cat="Bag"><i class="fa-solid fa-bag-shopping"></i> Bags &amp; Backpacks</div>
+        <div class="pill" data-cat="Laptop"><i class="fa-solid fa-laptop"></i> Laptops</div>
+        <div class="pill" data-cat="Electronics"><i class="fa-solid fa-headphones"></i> Electronics</div>
+        <div class="pill" data-cat="Documents"><i class="fa-solid fa-id-card"></i> Cards &amp; IDs</div>
+        <div class="pill" data-cat="Other"><i class="fa-solid fa-box-open"></i> Others</div>
+      </div>
+    </div>
+
+    <!-- Feed Header: Tabs & Quick Clear -->
+    <div class="feed-header">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="ALL">
+          All Items <span class="tab-badge" id="badge-tab-all">0</span>
+        </button>
+        <button class="tab-btn" data-tab="LOST">
+          <i class="fa-solid fa-circle" style="font-size: 8px; color: var(--lost-color);"></i>
+          Lost Items <span class="tab-badge" id="badge-tab-lost">0</span>
+        </button>
+        <button class="tab-btn" data-tab="FOUND">
+          <i class="fa-solid fa-circle" style="font-size: 8px; color: var(--found-color);"></i>
+          Found Items <span class="tab-badge" id="badge-tab-found">0</span>
+        </button>
+        <button class="tab-btn" data-tab="MATCHES">
+          <i class="fa-solid fa-sparkles" style="color: #f59e0b;"></i>
+          Smart Matches <span class="tab-badge" id="badge-tab-matches">0</span>
+        </button>
+      </div>
+      <button id="btn-clear-feed" class="btn btn-secondary btn-sm" style="display: none;" onclick="clearAllFeedData()" title="Clear all recent listings from board">
+        <i class="fa-solid fa-trash-can" style="color: var(--lost-color); margin-right: 4px;"></i> Clear All
+      </button>
+    </div>
+
+    <!-- Items Grid Container -->
+    <div id="items-grid" class="items-grid">
+      <!-- Injected dynamically via js/app.js -->
+    </div>
+  </main>
+
+  <!-- Report Item Modal -->
+  <div id="report-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="report-modal-title" class="modal-title">Report an Item</h3>
+        <button class="modal-close" onclick="closeModal('report-modal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="report-form">
+          
+          <!-- Type Toggle -->
+          <div class="type-toggle">
+            <label id="toggle-lost" class="toggle-option lost-opt active">
+              <i class="fa-solid fa-circle-exclamation" style="font-size: 22px;"></i>
+              <span>I Lost an Item</span>
+            </label>
+            <label id="toggle-found" class="toggle-option found-opt">
+              <i class="fa-solid fa-hand-holding-heart" style="font-size: 22px;"></i>
+              <span>I Found an Item</span>
+            </label>
+          </div>
+
+          <!-- Title -->
+          <div class="form-group">
+            <label class="form-label" for="form-title">Item Name / Title *</label>
+            <input type="text" id="form-title" class="form-control" placeholder="e.g., Apple iPhone 13, Black Fossil Wallet" required />
+          </div>
+
+          <!-- Category & Date Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="form-category">Category *</label>
+              <select id="form-category" class="form-control" required>
+                <option value="Wallet">Wallet</option>
+                <option value="Phone">Phone</option>
+                <option value="Keys">Keys</option>
+                <option value="Bag">Bag / Backpack</option>
+                <option value="Laptop">Laptop / Tablet</option>
+                <option value="Electronics">Electronics / Headphones</option>
+                <option value="Documents">ID Card / Documents</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="form-date">Date Lost / Found *</label>
+              <input type="date" id="form-date" class="form-control" required />
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="form-group">
+            <label class="form-label" for="form-location">Campus Location *</label>
+            <input type="text" id="form-location" class="form-control" placeholder="e.g., Main Library 2nd Floor, Room 204, Gym" required />
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label class="form-label" for="form-desc">Description &amp; Marks</label>
+            <textarea id="form-desc" class="form-control" rows="3" placeholder="Color, brand, unique scratches, stickers, or distinguishing characteristics..."></textarea>
+          </div>
+
+          <!-- Photo Upload / Preview -->
+          <div class="form-group">
+            <label class="form-label" for="item-image-input">Photo (Optional)</label>
+            <div class="upload-dropzone" id="upload-dropzone" tabindex="0" role="button" aria-label="Upload item photo">
+              <input type="file" id="item-image-input" accept="image/png, image/jpeg, image/webp" style="display: none;" />
+              
+              <!-- Initial Upload Prompt -->
+              <div id="upload-prompt" class="upload-prompt">
+                <div class="upload-icon-circle">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div class="upload-title">Click to upload a picture</div>
+                <div class="upload-desc">PNG, JPG, WEBP up to 5MB (or drag &amp; drop)</div>
+              </div>
+
+              <!-- Uploaded Preview -->
+              <div id="upload-preview-container" class="upload-preview-container" style="display: none;">
+                <div class="upload-preview-wrapper">
+                  <img id="image-preview" class="upload-preview" alt="Uploaded Preview" />
+                  <button type="button" id="btn-remove-photo" class="btn-remove-photo" title="Remove photo">
+                    <i class="fa-solid fa-trash-can"></i> Remove
+                  </button>
+                </div>
+                <div class="upload-change-hint">
+                  <i class="fa-solid fa-arrows-rotate"></i> Click or drop another image to replace
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Name & Phone/Email -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="form-contact-name">Your Name *</label>
+              <input type="text" id="form-contact-name" class="form-control" placeholder="e.g., Alex Johnson" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="form-contact-info">Phone or Email *</label>
+              <input type="text" id="form-contact-info" class="form-control" placeholder="e.g., +1-555-0199 or email" required />
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-report" class="btn btn-primary btn-block" style="padding: 13px; font-size: 15px; margin-top: 10px;">
+            Publish Notice
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item Details Modal -->
+  <div id="details-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Item Information</h3>
+        <button class="modal-close" onclick="closeModal('details-modal')">&times;</button>
+      </div>
+      <div class="modal-body" id="details-modal-body">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 <strong>FindBack</strong> &bull; Simple, Reliable Campus Lost &amp; Found.</p>
+      <p style="margin-top: 6px;">
+        Community lost and found board &bull; Works directly in any browser.
+      </p>
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

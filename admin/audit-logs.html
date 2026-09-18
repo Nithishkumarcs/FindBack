@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Audit Logs — FindBack Admin</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container container-wide">
+
+      <!-- Admin Header -->
+      <div style="margin-bottom: 1.5rem;">
+        <div class="d-flex align-center gap-2" style="margin-bottom: 0.5rem;">
+          <span class="badge badge-sensitive"><i class="fa-solid fa-shield-halved"></i> Administrator Console</span>
+          <span class="text-xs text-muted">Immutable Security & Event Records</span>
+        </div>
+        <h1 style="font-size: 2.2rem; margin-bottom: 1rem;">System Audit Trail</h1>
+
+        <div class="admin-nav">
+          <a href="index.html" class="admin-nav-item"><i class="fa-solid fa-chart-line"></i> Overview & Analytics</a>
+          <a href="users.html" class="admin-nav-item"><i class="fa-solid fa-users"></i> Users Management</a>
+          <a href="reports.html" class="admin-nav-item"><i class="fa-solid fa-boxes-stacked"></i> Reports Moderation</a>
+          <a href="claims.html" class="admin-nav-item"><i class="fa-solid fa-clipboard-check"></i> Claims & Disputes</a>
+          <a href="audit-logs.html" class="admin-nav-item active"><i class="fa-solid fa-shield-cat"></i> Audit Logs</a>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="admin-audit-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Actor</th>
+              <th>Action Code</th>
+              <th>Target Entity</th>
+              <th>Metadata Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" class="text-center text-muted" style="padding: 2rem;">Loading security audit log...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/matching.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

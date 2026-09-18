@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container container-narrow">
+
+      <div class="d-flex justify-between align-center flex-wrap gap-2" style="margin-bottom: 2rem;">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Notifications Inbox</h1>
+          <p class="text-sm">Real-time alerts for potential matches, claim status updates, and handover coordination.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="markAllNotificationsRead()">
+          <i class="fa-solid fa-check-double"></i> Mark All as Read
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-body" id="notifications-container" style="padding: 0.5rem 1.5rem;">
+          <div class="text-center" style="padding: 3rem 0;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="margin-top: 1rem; color: var(--text-muted);">Loading alerts...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.isLoggedIn()) {
+        window.location.href = 'login.html?redirect=notifications.html';
+        return;
+      }
+      loadNotifications();
+    });
+
+    async function loadNotifications() {
+      const container = document.getElementById('notifications-container');
+      try {
+        const res = await apiFetch('/notifications');
+        const notifs = res.notifications || [];
+
+        if (notifs.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-regular fa-bell-slash"></i></div>
+              <h3 class="empty-title">All Caught Up!</h3>
+              <p class="empty-desc">You have no unread notifications or recent updates.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = notifs.map(n => `
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 1.2rem 0; border-bottom: 1px solid var(--border-color); ${!n.is_read ? 'background: rgba(59, 130, 246, 0.04);' : ''}">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: ${!n.is_read ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; flex-shrink: 0; margin-top: 2px;">
+                <i class="fa-solid ${getNotifIcon(n.type)}"></i>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main); margin-bottom: 0.2rem;">${n.title}</div>
+                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.4rem;">${n.message}</div>
+                <div style="font-size: 0.775rem; color: var(--text-dim);">
+                  ${new Date(n.created_at).toLocaleString()}
+                  ${n.link ? ` • <a href="${n.link}" style="font-weight: 600;">View Activity →</a>` : ''}
+                </div>
+              </div>
+            </div>
+
+            ${!n.is_read ? `
+              <button class="btn btn-outline btn-sm" onclick="markOneRead(${n.id})" title="Mark as read">
+                <i class="fa-solid fa-check"></i>
+              </button>
+            ` : ''}
+          </div>
+        `).join('');
+
+      } catch (err) {
+        container.innerHTML = `<div class="text-center text-muted" style="padding: 2rem;">Failed to load notifications.</div>`;
+      }
+    }
+
+    function getNotifIcon(type) {
+      if (type.includes('MATCH')) return 'fa-bolt';
+      if (type.includes('CLAIM')) return 'fa-clipboard-check';
+      if (type.includes('RECOVERY')) return 'fa-circle-check';
+      return 'fa-bell';
+    }
+
+    async function markOneRead(id) {
+      try {
+        await apiFetch(`/notifications/${id}/read`, { method: 'PUT' });
+        loadNotifications();
+        fetchUnreadNotificationsCount();
+      } catch (e) {}
+    }
+
+    async function markAllNotificationsRead() {
+      try {
+        await apiFetch('/notifications/read-all', { method: 'PUT' });
+        loadNotifications();
+        fetchUnreadNotificationsCount();
+        showToast('All notifications marked as read.', 'success');
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>

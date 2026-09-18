@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Potential Matches — FindBack Rule-Based Matching Engine</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <!-- Header -->
+      <div style="margin-bottom: 2rem;">
+        <div class="d-flex align-center gap-2" style="margin-bottom: 0.5rem;">
+          <span class="badge badge-match-high"><i class="fa-solid fa-bolt"></i> Smart Matcher</span>
+          <span class="text-xs text-muted">Automatic Lost & Found Suggestions</span>
+        </div>
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Potential Item Matches</h1>
+        <p class="text-sm">
+          When someone reports an item matching your lost or found listing on campus, it appears here automatically.
+        </p>
+      </div>
+
+      <!-- Filter / Focus Bar -->
+      <div id="target-report-banner" style="display: none; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 2rem;">
+        <div class="d-flex justify-between align-center flex-wrap gap-2">
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Showing Matches For</span>
+            <h3 id="target-report-name" style="font-size: 1.15rem; margin-top: 2px;"></h3>
+          </div>
+          <a href="matches.html" class="btn btn-secondary btn-sm">Show All My Matches</a>
+        </div>
+      </div>
+
+      <!-- Matches Container -->
+      <div id="matches-list-container">
+        <div class="text-center" style="padding: 4rem 0;">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+          <p style="margin-top: 1rem; color: var(--text-muted);">Evaluating matches...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/claims.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMatches();
+    });
+
+    async function loadMatches() {
+      const container = document.getElementById('matches-list-container');
+      const params = new URLSearchParams(window.location.search);
+      const reportId = params.get('report_id');
+
+      let endpoint = '/matches/user';
+      if (reportId) {
+        endpoint = `/matches/report/${reportId}`;
+      } else if (!Auth.isLoggedIn()) {
+        window.location.href = 'login.html?redirect=matches.html';
+        return;
+      }
+
+      try {
+        const res = await apiFetch(endpoint);
+        
+        if (reportId && res.report) {
+          document.getElementById('target-report-banner').style.display = 'block';
+          document.getElementById('target-report-name').innerText = `${res.report.item_name} (${res.report.case_id})`;
+        }
+
+        const matches = res.matches || [];
+
+        if (matches.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-bolt-slash"></i></div>
+              <h3 class="empty-title">No High-Confidence Matches Found Yet</h3>
+              <p class="empty-desc">
+                Our matching algorithm scans new reports continuously. When someone reports an item that matches your category, location, and description, it will automatically show up here.
+              </p>
+              <div class="d-flex justify-center gap-2">
+                <a href="reports.html" class="btn btn-primary">Browse Network Manually</a>
+                <a href="dashboard.html" class="btn btn-secondary">Go to Dashboard</a>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = matches.map(m => renderMatchCard(m)).join('');
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state" style="color: var(--lost-red);">
+            <div class="empty-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <h3 class="empty-title">Unable to Load Matches</h3>
+            <p class="empty-desc">${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderMatchCard(m) {
+      const lost = m.lost_report || {};
+      const found = m.found_report || {};
+      const score = m.match_score;
+      const b = m.breakdown;
+
+      const scoreColor = score >= 80 ? 'var(--found-green)' : (score >= 60 ? 'var(--accent-cyan)' : 'var(--pending-amber)');
+
+      return `
+        <div class="match-card">
+          <!-- Score Badge -->
+          <div class="match-score-badge">
+            <div class="match-percentage" style="color: ${scoreColor};">${score}%</div>
+            <div class="match-label" style="font-weight: 600;">Match Confidence</div>
+          </div>
+
+          <!-- Match Details -->
+          <div class="match-details">
+            <div class="d-flex justify-between align-center flex-wrap gap-1" style="margin-bottom: 0.4rem;">
+              <h3 style="font-size: 1.25rem;">${lost.item_name || 'Lost Item'} ↔ ${found.item_name || 'Found Item'}</h3>
+              <span class="badge ${m.status === 'CLAIMED' ? 'badge-recovered' : 'badge-match-high'}">${m.status}</span>
+            </div>
+
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.85rem; display: flex; flex-direction: column; gap: 4px;">
+              <div><i class="fa-solid fa-circle-exclamation" style="color: var(--lost-red); width: 18px;"></i> <b>Lost:</b> ${lost.item_name} at <b>${lost.location_name || 'Campus'}</b> on ${lost.report_date || ''}</div>
+              <div><i class="fa-solid fa-hand-holding-heart" style="color: var(--found-green); width: 18px;"></i> <b>Found:</b> ${found.item_name} at <b>${found.location_name || 'Campus'}</b> on ${found.report_date || ''}</div>
+            </div>
+
+            <!-- Simple Friendly Reason -->
+            <div style="background: rgba(59, 130, 246, 0.08); border-left: 3px solid var(--primary); padding: 0.65rem 0.85rem; border-radius: 4px; font-size: 0.85rem; color: var(--text-main); margin-bottom: 1rem;">
+              <i class="fa-solid fa-circle-info" style="color: var(--primary); margin-right: 4px;"></i>
+              <b>Why this matches:</b> Similar item name, reported in the same campus area (<b>${lost.location_name || found.location_name}</b>), with matching date.
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex flex-wrap gap-2">
+              <a href="report-details.html?id=${found.id || lost.id}" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-eye"></i> View Listing Details
+              </a>
+              ${found.id ? `
+                <button class="btn btn-primary btn-sm" onclick="openClaimModal(${found.id}, ${m.id})">
+                  <i class="fa-solid fa-clipboard-check"></i> Claim This Item
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

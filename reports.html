@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Items — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <!-- Header & Search Controls -->
+      <div style="margin-bottom: 1.5rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.35rem;">Search Lost & Found Items</h1>
+        <p class="text-sm">Filter by listing type, category, or search keywords.</p>
+      </div>
+
+      <!-- Clean Search Control Box -->
+      <div class="search-control-bar">
+        <!-- Quick Filter Pills -->
+        <div class="search-pills">
+          <button class="search-pill active" id="pill-all" onclick="setFilterType('', this)">All Items</button>
+          <button class="search-pill" id="pill-lost" onclick="setFilterType('LOST', this)"><i class="fa-solid fa-circle-exclamation" style="color: var(--lost-red);"></i> Lost Only</button>
+          <button class="search-pill" id="pill-found" onclick="setFilterType('FOUND', this)"><i class="fa-solid fa-hand-holding-heart" style="color: var(--found-green);"></i> Found Only</button>
+        </div>
+
+        <input type="hidden" id="filter-type" value="" />
+
+        <!-- Search Bar & Category Dropdown -->
+        <div class="search-controls-grid">
+          <div style="position: relative;">
+            <input type="text" id="search-keyword" class="form-control" placeholder="Search by item name, campus building, room..." />
+          </div>
+
+          <div>
+            <select id="filter-category" class="form-select">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+
+          <div>
+            <select id="sort-by" class="form-select">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+
+          <div>
+            <button class="btn btn-outline" onclick="clearAllFilters()" title="Reset Filters"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="d-flex justify-between align-center" style="margin-bottom: 1.25rem;">
+        <div id="results-count" class="text-sm text-muted font-weight-bold">
+          Loading items...
+        </div>
+      </div>
+
+      <!-- Reports Grid -->
+      <div class="grid-3" id="reports-grid" style="margin-bottom: 2.5rem;"></div>
+
+      <!-- Pagination -->
+      <div id="pagination-wrap"></div>
+
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/search.js"></script>
+  <script>
+    function setFilterType(type, pillEl) {
+      document.querySelectorAll('.search-pill').forEach(p => p.classList.remove('active'));
+      pillEl.classList.add('active');
+      document.getElementById('filter-type').value = type;
+      executeSearch(1);
+    }
+
+    function clearAllFilters() {
+      document.getElementById('search-keyword').value = '';
+      document.getElementById('filter-type').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('sort-by').value = 'newest';
+      document.querySelectorAll('.search-pill').forEach(p => p.classList.remove('active'));
+      document.getElementById('pill-all').classList.add('active');
+      executeSearch(1);
+    }
+  </script>
+</body>
+</html>

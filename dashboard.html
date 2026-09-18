@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Dashboard — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <!-- Friendly Header Banner -->
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-xs);">
+        <div class="d-flex justify-between align-center flex-wrap gap-2">
+          <div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.25rem;" id="dash-greeting">Welcome back!</h1>
+            <p class="text-sm">Manage your reported belongings, inspect potential matches, and track recovery claims.</p>
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="report-lost.html" class="btn btn-danger">
+              <i class="fa-solid fa-circle-exclamation"></i> I Lost Something
+            </a>
+            <a href="report-found.html" class="btn btn-success">
+              <i class="fa-solid fa-hand-holding-heart"></i> I Found Something
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clean Summary Counters -->
+      <div class="grid-4" style="margin-bottom: 2.5rem;">
+        <div class="stat-card">
+          <div>
+            <div class="stat-value" id="user-lost-count" style="color: var(--lost-red);">0</div>
+            <div class="stat-label">Lost Reports</div>
+          </div>
+          <div class="stat-icon" style="background: var(--lost-bg); color: var(--lost-red);"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div>
+            <div class="stat-value" id="user-found-count" style="color: var(--found-green);">0</div>
+            <div class="stat-label">Found Reports</div>
+          </div>
+          <div class="stat-icon" style="background: var(--found-bg); color: var(--found-green);"><i class="fa-solid fa-box-open"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div>
+            <div class="stat-value" id="user-claims-count" style="color: var(--pending-amber);">0</div>
+            <div class="stat-label">Active Claims</div>
+          </div>
+          <div class="stat-icon" style="background: var(--pending-bg); color: var(--pending-amber);"><i class="fa-solid fa-clipboard-check"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div>
+            <div class="stat-value" id="user-recovered-count" style="color: var(--recovered-teal);">0</div>
+            <div class="stat-label">Recovered Items</div>
+          </div>
+          <div class="stat-icon" style="background: var(--recovered-bg); color: var(--recovered-teal);"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="content-sidebar-grid">
+        <!-- Left: Potential Matches & Reports -->
+        <div>
+          <!-- Potential Matches Card -->
+          <div class="card" style="margin-bottom: 1.75rem;">
+            <div class="card-header">
+              <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> Smart Match Suggestions</h3>
+              <a href="matches.html" class="btn btn-outline btn-sm">View All Matches</a>
+            </div>
+            <div class="card-body" id="dash-matches-list">
+              <div class="text-center text-muted" style="padding: 1.5rem 0;">Scanning for matching items...</div>
+            </div>
+          </div>
+
+          <!-- My Active Reports -->
+          <div class="card">
+            <div class="card-header">
+              <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-boxes-stacked"></i> My Reported Items</h3>
+              <a href="reports.html" class="btn btn-outline btn-sm">Browse All Items</a>
+            </div>
+            <div class="card-body" id="dash-reports-list">
+              <div class="text-center text-muted" style="padding: 1.5rem 0;">Loading your listings...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Recent Alerts & Safe Recovery Tips -->
+        <div>
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <h3 style="font-size: 1rem;"><i class="fa-regular fa-bell"></i> Recent Alerts</h3>
+              <a href="notifications.html" class="text-xs text-primary font-weight-bold">View Inbox</a>
+            </div>
+            <div class="card-body" id="dash-notif-list" style="padding: 0.75rem 1.25rem;">
+              <div class="text-center text-muted" style="padding: 1rem 0;">No new alerts</div>
+            </div>
+          </div>
+
+          <!-- Helpful Campus Tips -->
+          <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
+            <div class="card-body">
+              <h4 style="font-size: 0.95rem; margin-bottom: 0.6rem; color: var(--primary);">
+                <i class="fa-solid fa-graduation-cap"></i> Campus Return Tips
+              </h4>
+              <ul style="font-size: 0.825rem; color: var(--text-muted); list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding-left: 0;">
+                <li><i class="fa-solid fa-check" style="color: var(--found-green); margin-right: 6px;"></i> Meet at a known spot like the Library or Dept Office.</li>
+                <li><i class="fa-solid fa-check" style="color: var(--found-green); margin-right: 6px;"></i> Verify the item details before handing it over.</li>
+                <li><i class="fa-solid fa-check" style="color: var(--found-green); margin-right: 6px;"></i> Mark as Returned once safely handed over.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!Auth.isLoggedIn()) {
+        window.location.href = 'login.html?redirect=dashboard.html';
+        return;
+      }
+
+      const user = Auth.getUser();
+      document.getElementById('dash-greeting').innerText = `Welcome back, ${user.name}!`;
+
+      try {
+        const profileRes = await apiFetch('/auth/me');
+        if (profileRes.user && profileRes.user.stats) {
+          const s = profileRes.user.stats;
+          document.getElementById('user-lost-count').innerText = s.lost_count;
+          document.getElementById('user-found-count').innerText = s.found_count;
+          document.getElementById('user-claims-count').innerText = s.claims_count;
+          document.getElementById('user-recovered-count').innerText = s.recovered_count;
+        }
+
+        // Matches preview
+        const matchRes = await apiFetch('/matches/user');
+        const matchContainer = document.getElementById('dash-matches-list');
+        if (matchRes.matches && matchRes.matches.length > 0) {
+          matchContainer.innerHTML = matchRes.matches.slice(0, 3).map(m => `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 0.6rem; background: var(--bg-main);">
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem;">${m.lost_report ? m.lost_report.item_name : 'Item'} ↔ ${m.found_report ? m.found_report.item_name : 'Item'}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Campus Spot: <b>${m.lost_report?.location_name || m.found_report?.location_name || 'Campus'}</b></div>
+              </div>
+              <div class="d-flex align-center gap-2">
+                <span class="badge badge-match-high">${m.match_score}% Match</span>
+                <a href="matches.html" class="btn btn-primary btn-sm">View Match</a>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          matchContainer.innerHTML = `<div class="text-center text-muted" style="padding: 1.5rem 0;">No matches detected yet. When an item matching yours is reported, it will appear here.</div>`;
+        }
+
+        // Reports preview
+        const reportsRes = await apiFetch(`/reports?user_id=${user.id}`);
+        const reportsContainer = document.getElementById('dash-reports-list');
+        if (reportsRes.reports && reportsRes.reports.length > 0) {
+          reportsContainer.innerHTML = reportsRes.reports.slice(0, 5).map(r => `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+              <div>
+                <a href="report-details.html?id=${r.id}" style="font-weight: 600; color: var(--text-main);">${r.item_name}</a>
+                <div style="font-size: 0.775rem; color: var(--text-dim); font-family: monospace;">${r.case_id} • ${r.location_name}</div>
+              </div>
+              <div class="d-flex align-center gap-2">
+                ${getStatusBadge(r.status, r.report_type)}
+                <a href="report-details.html?id=${r.id}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          reportsContainer.innerHTML = `<div class="text-center text-muted" style="padding: 1.5rem 0;">You have not posted any reports yet.</div>`;
+        }
+
+        // Notifications preview
+        const notifRes = await apiFetch('/notifications');
+        const notifContainer = document.getElementById('dash-notif-list');
+        if (notifRes.notifications && notifRes.notifications.length > 0) {
+          notifContainer.innerHTML = notifRes.notifications.slice(0, 4).map(n => `
+            <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;">
+              <div style="font-weight: 600; ${!n.is_read ? 'color: var(--primary);' : ''}">${n.title}</div>
+              <div style="color: var(--text-muted); font-size: 0.8rem; margin: 0.2rem 0;">${n.message}</div>
+              ${n.link ? `<a href="${n.link}" style="font-size: 0.775rem; color: var(--primary); font-weight: 600;">View details →</a>` : ''}
+            </div>
+          `).join('');
+        } else {
+          notifContainer.innerHTML = `<div class="text-center text-muted" style="padding: 1rem 0;">No notifications</div>`;
+        }
+
+      } catch (e) {
+        console.error('Dashboard load error:', e);
+      }
+    });
+  </script>
+</body>
+</html>

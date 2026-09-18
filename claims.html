@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ownership Claims & Recovery — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container container-narrow">
+
+      <!-- Header -->
+      <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Item Claims & Safe Returns</h1>
+        <p class="text-sm">Manage requests to claim found belongings and coordinate safe handovers on campus.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+        <button class="btn btn-secondary btn-sm active" id="tab-submitted" onclick="switchTab('submitted')">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Items I Claimed
+        </button>
+        <button class="btn btn-secondary btn-sm" id="tab-received" onclick="switchTab('received')">
+          <i class="fa-solid fa-inbox"></i> Requests for Items I Found
+        </button>
+      </div>
+
+      <!-- Submitted Claims Container -->
+      <div id="submitted-claims-section">
+        <div id="submitted-claims-list">
+          <div class="text-center" style="padding: 3rem 0;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="margin-top: 1rem; color: var(--text-muted);">Loading claims...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Received Claims Container -->
+      <div id="received-claims-section" style="display: none;">
+        <div id="received-claims-list">
+          <div class="text-center" style="padding: 3rem 0;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="margin-top: 1rem; color: var(--text-muted);">Loading claims...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/claims.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.isLoggedIn()) {
+        window.location.href = 'login.html?redirect=claims.html';
+        return;
+      }
+      loadClaimsPage();
+    });
+
+    function switchTab(tab) {
+      const subTab = document.getElementById('tab-submitted');
+      const recTab = document.getElementById('tab-received');
+      const subSec = document.getElementById('submitted-claims-section');
+      const recSec = document.getElementById('received-claims-section');
+
+      if (tab === 'submitted') {
+        subTab.classList.add('btn-primary');
+        subTab.classList.remove('btn-secondary');
+        recTab.classList.add('btn-secondary');
+        recTab.classList.remove('btn-primary');
+        subSec.style.display = 'block';
+        recSec.style.display = 'none';
+      } else {
+        recTab.classList.add('btn-primary');
+        recTab.classList.remove('btn-secondary');
+        subTab.classList.add('btn-secondary');
+        subTab.classList.remove('btn-primary');
+        recSec.style.display = 'block';
+        subSec.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

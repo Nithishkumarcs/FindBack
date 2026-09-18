@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Official Case Tracking & Verification — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container container-narrow" id="case-content">
+      <div class="text-center" style="padding: 4rem 0;">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+        <p style="margin-top: 1rem; color: var(--text-muted);">Resolving Case ID...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/claims.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      resolveCase();
+    });
+
+    async function resolveCase() {
+      const params = new URLSearchParams(window.location.search);
+      const caseId = params.get('case_id');
+      const container = document.getElementById('case-content');
+
+      if (!caseId) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3 class="empty-title">Case ID Not Provided</h3>
+            <p class="empty-desc">Please scan an official FindBack QR Code or enter a valid Case ID.</p>
+            <a href="reports.html" class="btn btn-primary">Search Network</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await apiFetch(`/cases/${caseId}`);
+        const r = res.report;
+
+        container.innerHTML = `
+          <div class="card qr-card" style="box-shadow: var(--shadow-lg);">
+            <div class="card-body" style="padding: 2.5rem 2rem;">
+              <div class="brand-icon" style="margin: 0 auto 0.75rem; width: 44px; height: 44px;">
+                <i class="fa-solid fa-location-crosshairs"></i>
+              </div>
+              <div class="text-xs text-muted" style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+                Official Network Verification
+              </div>
+              
+              <div class="case-id-display">${res.case_id}</div>
+
+              <div id="qrcode-box" class="qr-box"></div>
+
+              <h2 style="font-size: 1.4rem; margin-bottom: 0.35rem;">${r.item_name}</h2>
+              <div style="margin-bottom: 1.25rem;">
+                ${getStatusBadge(r.status, r.report_type)}
+                ${r.is_sensitive ? `<span class="badge badge-sensitive" style="margin-left: 4px;">Protected Document</span>` : ''}
+              </div>
+
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; text-align: left; font-size: 0.875rem; margin-bottom: 1.5rem;">
+                <div class="d-flex justify-between" style="margin-bottom: 0.4rem;">
+                  <span class="text-muted">Listing Type:</span>
+                  <b>${r.report_type} Item</b>
+                </div>
+                <div class="d-flex justify-between" style="margin-bottom: 0.4rem;">
+                  <span class="text-muted">Location:</span>
+                  <span>${r.location_name}</span>
+                </div>
+                <div class="d-flex justify-between" style="margin-bottom: 0.4rem;">
+                  <span class="text-muted">Date Registered:</span>
+                  <span>${r.report_date}</span>
+                </div>
+                <div class="d-flex justify-between">
+                  <span class="text-muted">Handover State:</span>
+                  <span style="color: ${res.is_recovered ? 'var(--recovered-teal)' : 'var(--pending-amber)'}; font-weight: 700;">
+                    ${res.is_recovered ? 'Safely Recovered ✓' : (res.has_active_handover ? 'Handover in Progress' : 'Active Custody')}
+                  </span>
+                </div>
+              </div>
+
+              <div class="d-flex justify-center flex-wrap gap-2">
+                <a href="report-details.html?id=${r.id}" class="btn btn-primary btn-sm">
+                  <i class="fa-solid fa-file-lines"></i> View Listing Details
+                </a>
+                ${r.report_type === 'FOUND' && r.status === 'ACTIVE' ? `
+                  <button class="btn btn-outline btn-sm" onclick="openClaimModal(${r.id})">
+                    <i class="fa-solid fa-clipboard-check"></i> Submit Ownership Claim
+                  </button>
+                ` : ''}
+              </div>
+
+              <div class="text-xs text-dim" style="margin-top: 1.5rem;">
+                Scan with any smartphone camera for live custody verification. No personal contact data exposed.
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Render QR Code targeting current case URL
+        new QRCode(document.getElementById("qrcode-box"), {
+          text: window.location.href,
+          width: 176,
+          height: 176,
+          colorDark : "#0a0f1d",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.M
+        });
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state" style="color: var(--lost-red);">
+            <div class="empty-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <h3 class="empty-title">Invalid or Expired Case ID</h3>
+            <p class="empty-desc">${err.message}</p>
+            <a href="reports.html" class="btn btn-outline">Return to Network</a>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

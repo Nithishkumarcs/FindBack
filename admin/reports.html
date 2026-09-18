@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports Moderation — FindBack Admin</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container container-wide">
+
+      <!-- Admin Header -->
+      <div style="margin-bottom: 1.5rem;">
+        <div class="d-flex align-center gap-2" style="margin-bottom: 0.5rem;">
+          <span class="badge badge-sensitive"><i class="fa-solid fa-shield-halved"></i> Administrator Console</span>
+          <span class="text-xs text-muted">Listing Moderation & Abuse Queue</span>
+        </div>
+        <h1 style="font-size: 2.2rem; margin-bottom: 1rem;">Reports & Flagged Content Moderation</h1>
+
+        <div class="admin-nav">
+          <a href="index.html" class="admin-nav-item"><i class="fa-solid fa-chart-line"></i> Overview & Analytics</a>
+          <a href="users.html" class="admin-nav-item"><i class="fa-solid fa-users"></i> Users Management</a>
+          <a href="reports.html" class="admin-nav-item active"><i class="fa-solid fa-boxes-stacked"></i> Reports Moderation</a>
+          <a href="claims.html" class="admin-nav-item"><i class="fa-solid fa-clipboard-check"></i> Claims & Disputes</a>
+          <a href="audit-logs.html" class="admin-nav-item"><i class="fa-solid fa-shield-cat"></i> Audit Logs</a>
+        </div>
+      </div>
+
+      <!-- Section 1: Abuse Reports Queue -->
+      <div style="margin-bottom: 3rem;" id="abuse-section">
+        <h2 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--lost-red);">
+          <i class="fa-solid fa-flag"></i> Community Flagged Abuse Reports
+        </h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="admin-abuse-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Target Case / Item</th>
+                <th>Flag Reason</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Moderation Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="6" class="text-center text-muted" style="padding: 1.5rem;">Loading abuse reports...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2: All Network Reports -->
+      <div>
+        <h2 style="font-size: 1.35rem; margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-list-check"></i> All Network Item Reports
+        </h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="admin-reports-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Item Name</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" class="text-center text-muted" style="padding: 1.5rem;">Loading reports...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/matching.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

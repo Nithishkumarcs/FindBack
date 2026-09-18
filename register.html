@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register Account — FindBack Lost & Found Network</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper d-flex align-center justify-center">
+    <div class="container container-narrow" style="max-width: 520px;">
+      <div class="card" style="box-shadow: var(--shadow-lg);">
+        <div class="card-body" style="padding: 2.25rem;">
+          <div class="text-center" style="margin-bottom: 1.75rem;">
+            <div class="brand-icon" style="margin: 0 auto 1rem; width: 48px; height: 48px; font-size: 1.3rem;">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; margin-bottom: 0.35rem;">Join FindBack</h2>
+            <p class="text-sm">Create an account to report lost belongings, return found items, and track claims</p>
+          </div>
+
+          <form id="register-form">
+            <div class="form-group">
+              <label class="form-label" for="name">Full Name <span style="color: var(--lost-red);">*</span></label>
+              <input type="text" id="name" class="form-control" placeholder="e.g. Alex Morgan" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address <span style="color: var(--lost-red);">*</span></label>
+              <input type="email" id="email" class="form-control" placeholder="alex@university.edu" required />
+              <div class="form-text">Used for safe ownership claim updates. Never sold or shared.</div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="password">Password <span style="color: var(--lost-red);">*</span></label>
+                <input type="password" id="password" class="form-control" placeholder="Min. 8 chars" required minlength="8" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="confirm_password">Confirm Password <span style="color: var(--lost-red);">*</span></label>
+                <input type="password" id="confirm_password" class="form-control" placeholder="Repeat password" required />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone Number <span class="text-muted text-xs">(Optional)</span></label>
+                <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 000-0000" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="general_location">Campus / Community <span class="text-muted text-xs">(Optional)</span></label>
+                <input type="text" id="general_location" class="form-control" placeholder="e.g. North Hall" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+              Create Account
+            </button>
+          </form>
+
+          <div class="text-center text-sm" style="margin-top: 1.5rem; color: var(--text-muted);">
+            Already have an account? <a href="login.html" style="font-weight: 600;">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Details — FindBack</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container" id="details-container">
+      <div class="text-center" style="padding: 4rem 0;">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+        <p style="margin-top: 1rem; color: var(--text-muted);">Loading case details...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/claims.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReportDetails();
+    });
+
+    async function loadReportDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const reportId = params.get('id');
+      const container = document.getElementById('details-container');
+
+      if (!reportId) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3 class="empty-title">Report Not Specified</h3>
+            <a href="/reports.html" class="btn btn-primary">Browse Reports</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await apiFetch(`/reports/${reportId}`);
+        const r = res.report;
+        const currentUser = Auth.getUser();
+        const isOwner = currentUser && currentUser.id === r.user_id;
+
+        const isFound = r.report_type === 'FOUND';
+        const badgeClass = isFound ? 'badge-found' : 'badge-lost';
+
+        container.innerHTML = `
+          <div style="margin-bottom: 1.5rem;">
+            <a href="index.html" class="text-sm text-muted" style="display: inline-flex; align-items: center; gap: 6px; margin-bottom: 1rem;">
+              <i class="fa-solid fa-arrow-left"></i> Back to Campus Notice Board
+            </a>
+            <div class="d-flex justify-between align-center flex-wrap gap-2">
+              <div>
+                <div class="d-flex align-center gap-2" style="margin-bottom: 0.35rem;">
+                  <span class="badge ${badgeClass}">${r.report_type} ITEM</span>
+                  ${getStatusBadge(r.status, r.report_type)}
+                </div>
+                <h1 style="font-size: 2.2rem;">${r.item_name}</h1>
+              </div>
+              
+              <div class="d-flex flex-wrap gap-2">
+                <a href="tel:${r.contact_phone || '9876543210'}" class="btn btn-success btn-lg">
+                  <i class="fa-solid fa-phone"></i> Call Contact Person
+                </a>
+                <a href="matches.html?report_id=${r.id}" class="btn btn-secondary btn-lg">
+                  <i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> Potential Matches
+                </a>
+              </div>
+            </div>
+          </div>
+
+          ${r.is_sensitive ? `
+            <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+              <i class="fa-solid fa-shield-halved" style="color: var(--sensitive-purple); font-size: 1.3rem; margin-top: 2px;"></i>
+              <div>
+                <strong style="color: var(--sensitive-purple); font-size: 0.95rem;">Protected Sensitive Document / Identity Card</strong>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                  To protect user privacy and prevent fraud, full identification numbers and card photos are strictly hidden. Genuine owners must submit ownership verification to claim.
+                </p>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="content-sidebar-grid">
+            <!-- Left Column: Image, Description, Characteristics -->
+            <div>
+              <div class="card" style="margin-bottom: 2rem;">
+                ${r.image_path ? `
+                  <div style="height: 380px; overflow: hidden; background: black; display: flex; align-items: center; justify-content: center;">
+                    <img src="${r.image_path}" alt="${r.item_name}" style="max-height: 100%; object-fit: contain;" />
+                  </div>
+                ` : ''}
+                
+                <div class="card-body">
+                  <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Description</h3>
+                  <p style="white-space: pre-wrap; margin-bottom: 1.5rem; line-height: 1.6;">${r.description}</p>
+
+                  ${r.identifying_characteristics ? `
+                    <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Identifying Characteristics</h3>
+                    <p style="white-space: pre-wrap; margin-bottom: 1.5rem; color: var(--text-muted);">${r.identifying_characteristics}</p>
+                  ` : ''}
+
+                  ${r.condition_info ? `
+                    <div style="font-size: 0.9rem; margin-bottom: 1rem;">
+                      <b>Item Condition:</b> <span class="badge badge-secondary">${r.condition_info}</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Campus Location Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 style="font-size: 1.05rem;"><i class="fa-solid fa-building-columns" style="color: var(--primary);"></i> Campus Location</h3>
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                  <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--primary); flex-shrink: 0;">
+                      <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                      <h4 style="font-size: 1.15rem; margin-bottom: 0.35rem; color: var(--text-main); font-weight: 700;">${r.location_name}</h4>
+                      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Reported location on campus where item was ${r.report_type === 'LOST' ? 'lost' : 'found'}.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Contact & Handover Details -->
+            <div>
+              <!-- Direct Contact Box -->
+              <div class="card" style="margin-bottom: 1.5rem; border-color: var(--primary);">
+                <div class="card-header" style="background: rgba(59, 130, 246, 0.08);">
+                  <h3 style="font-size: 1.1rem; color: var(--primary);"><i class="fa-solid fa-phone"></i> Contact Details</h3>
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                  <div style="margin-bottom: 1.25rem;">
+                    <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 700;">Posted By</span>
+                    <h4 style="font-size: 1.2rem; margin-top: 2px;">${r.contact_name || r.reporter_name || 'Campus Student'}</h4>
+                  </div>
+
+                  <div style="margin-bottom: 1.5rem;">
+                    <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 700;">Mobile / WhatsApp</span>
+                    <div style="font-size: 1.4rem; font-weight: 800; color: var(--found-green); margin-top: 4px;">
+                      ${r.contact_phone || '9876543210'}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-column gap-2">
+                    <a href="tel:${r.contact_phone || '9876543210'}" class="btn btn-success btn-lg" style="width: 100%; text-align: center;">
+                      <i class="fa-solid fa-phone"></i> Call Now (${r.contact_phone || '9876543210'})
+                    </a>
+                    <a href="https://wa.me/91${(r.contact_phone || '9876543210').replace(/\D/g, '')}" target="_blank" class="btn btn-outline btn-lg" style="width: 100%; text-align: center; border-color: var(--found-green); color: var(--found-green);">
+                      <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                  </div>
+
+                  <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                    <i class="fa-solid fa-shield-check" style="color: var(--primary); margin-right: 4px;"></i>
+                    <b>Campus Tip:</b> Meet at a well-lit spot such as the Library Desk or Dept Office to collect your item.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notice Summary Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 style="font-size: 1rem;"><i class="fa-solid fa-circle-info"></i> Notice Information</h3>
+                </div>
+                <div class="card-body" style="font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                  <div class="d-flex justify-between">
+                    <span class="text-muted">Category:</span>
+                    <b>${r.category_name || 'General'}</b>
+                  </div>
+                  <div class="d-flex justify-between">
+                    <span class="text-muted">Date ${r.report_type === 'LOST' ? 'Lost' : 'Found'}:</span>
+                    <b>${r.report_date} ${r.report_time || ''}</b>
+                  </div>
+                  <div class="d-flex justify-between">
+                    <span class="text-muted">Current Status:</span>
+                    <b>${r.status}</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Completed rendering details
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state" style="color: var(--lost-red);">
+            <div class="empty-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <h3 class="empty-title">Error Loading Report</h3>
+            <p class="empty-desc">${err.message}</p>
+            <a href="reports.html" class="btn btn-outline">Back to Reports</a>
+          </div>
+        `;
+      }
+    }
+
+    function openAbuseModal(reportId) {
+      if (!Auth.isLoggedIn()) {
+        showToast('Please sign in to flag a listing.', 'warning');
+        return;
+      }
+      const bodyHtml = `
+        <div class="form-group">
+          <label class="form-label">Reason for Reporting</label>
+          <select id="abuse-reason" class="form-select">
+            <option value="Fake item">Fake or non-existent item</option>
+            <option value="Wrong information">Incorrect information / misleading</option>
+            <option value="Spam">Spam listing</option>
+            <option value="Scam">Suspicious activity or scam attempt</option>
+            <option value="Duplicate report">Duplicate report</option>
+            <option value="Inappropriate content">Inappropriate / abusive content</option>
+            <option value="Other">Other reason</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Details / Explanation</label>
+          <textarea id="abuse-desc" class="form-control" rows="3" placeholder="Please provide specific details for our moderation team..." required></textarea>
+        </div>
+      `;
+      const footerButtons = `
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-danger btn-sm" onclick="submitAbuseReport(${reportId})">Submit Report</button>
+      `;
+      openModal('Flag Inappropriate Listing', bodyHtml, footerButtons);
+    }
+
+    async function submitAbuseReport(reportId) {
+      const reason = document.getElementById('abuse-reason').value;
+      const description = document.getElementById('abuse-desc').value.trim();
+      if (!description) {
+        showToast('Please provide details for the report.', 'warning');
+        return;
+      }
+      try {
+        const res = await apiFetch(`/reports/${reportId}/abuse`, {
+          method: 'POST',
+          body: JSON.stringify({ reason, description })
+        });
+        closeModal();
+        showToast(res.message, 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
