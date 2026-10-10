@@ -1,157 +1,146 @@
-# 🔎 FindBack – Lost & Found Network
+GestureLink — Vision-Based Touchless Laptop Control
 
-### 🌐 A Digital Platform for Managing Lost and Found Items
+Transform Your Webcam into a Spatial Touchless Interface
 
-<p align="center">
-  <a href="https://nithishkumarcs.github.io/FindBack/">
-    🌐 <strong>Live Demo</strong>
-  </a>
-</p>
+🌐 " Setup " (https://gesture-link-2ub9di1wh-nithishkumar1.vercel.app/)
 
 ---
 
-## 📌 Overview
+📌 Overview
 
-**FindBack** is a web-based Lost & Found Network designed to provide a centralized platform for reporting, searching, and managing lost and found items.
+GestureLink is a vision-based touchless interaction project that explores controlling a computer through hand gestures captured using a webcam.
 
-The system allows users to report lost or found items, search available reports, view possible matches, manage their profile, and receive notifications related to their reports.
+The project combines a modern web interface with a Python-based desktop application to explore gesture-based mouse control, finger writing, virtual whiteboarding, and presentation navigation.
 
-It is designed to make the lost and found process more organized, accessible, and easier to manage digitally.
+The web interface is deployed on Vercel, while desktop-level controls require the local Python application.
 
----
+🎯 Objectives
 
-## 🎯 Objectives
+- 🖐️ Enable touchless interaction using hand gestures.
+- 🖱️ Explore gesture-based mouse control.
+- ✍️ Support finger-based writing where implemented.
+- 📝 Explore virtual whiteboard functionality.
+- 🎮 Provide a user-friendly and interactive interface.
+- 💻 Integrate web technologies with Python-based desktop functionality.
 
-- 🔍 Make it easier to search for lost items
-- 📢 Allow users to report lost items
-- 📦 Allow users to report found items
-- 🤝 Help identify possible matches between lost and found reports
-- 📋 Provide organized report management
-- 🔔 Provide notifications for relevant activities
-- 👤 Provide user profile management
+✨ Features
 
----
+- 🌐 Web Interface — Access the GestureLink website online.
+- 🖐️ Hand Gesture Recognition — Detect supported hand gestures using a webcam.
+- 🖱️ Mouse Control — Explore gesture-based pointer movement.
+- ✍️ Air Writing — Draw or write using supported finger movements.
+- 📝 Virtual Whiteboard — Explore touchless drawing.
+- 🎞️ Presentation Control — Navigate slides using supported gestures.
+- ⚙️ Settings — Configure available application options.
 
-## ✨ Key Features
+Note: Feature availability depends on the current implementation. Desktop controls require the local Python application.
 
-### 📢 Report Lost Items
+🛠️ Technology Stack
 
-Users can report items that they have lost by providing relevant information.
+- Python — Desktop application
+- React.js — Frontend interface
+- Vite — Frontend development and build tool
+- HTML, CSS, JavaScript — Web technologies
+- Git & GitHub — Version control
+- Vercel — Web deployment
 
-### 📦 Report Found Items
+🗂️ Project Structure
 
-Users can report items that they have found.
-
-### 🔍 Search
-
-Users can search through available lost and found reports.
-
-### 🤝 Matching
-
-A dedicated matching section helps identify possible connections between lost and found reports.
-
-### 📋 Report Management
-
-Users can view and manage information related to their reports.
-
-### 🔔 Notifications
-
-A dedicated notifications page is available for displaying relevant updates.
-
-### 👤 User Profile
-
-Users can view and manage their profile information.
-
-### 🗺️ Map Functionality
-
-The project includes a dedicated JavaScript module for map and location-related functionality.
-
-### 🛠️ Admin Section
-
-An admin directory is included for administrative functionality.
-
----
-
-## 🧩 Application Pages
-
-| Page | Description |
-|------|-------------|
-| `index.html` | Main application page |
-| `login.html` | User login page |
-| `register.html` | User registration page |
-| `dashboard.html` | User dashboard |
-| `profile.html` | User profile |
-| `report-lost.html` | Lost item reporting page |
-| `report-found.html` | Found item reporting page |
-| `reports.html` | Reports page |
-| `report-details.html` | Report details page |
-| `matches.html` | Matching page |
-| `notifications.html` | Notifications page |
-| `case.html` | Case-related page |
-| `claims.html` | Claims-related page |
-
----
-
-## 🛠️ Technologies Used
-
-### Frontend
-
-- HTML
-- CSS
-- JavaScript
-
-### Backend
-
-- Python
-
-### Other Components
-
-- REST/API-related JavaScript modules
-- Map functionality
-- Database-related JavaScript module
-
----
-
-## 📁 Project Structure
-
-```text
-FindBack/
-│
-├── admin/
-│
-├── css/
-│
-├── js/
-│   ├── api.js
-│   ├── app.js
-│   ├── auth.js
-│   ├── claims.js
-│   ├── db.js
-│   ├── map.js
-│   ├── matching.js
-│   ├── reports.js
-│   └── search.js
-│
-├── LICENSE
-│
-├── README.md
-│
-├── app.py
-│
-├── case.html
-├── claims.html
-├── dashboard.html
-├── index.html
-├── login.html
-├── matches.html
-├── notifications.html
-├── profile.html
-├── register.html
-├── report-details.html
-├── report-found.html
-├── report-lost.html
-├── reports.html
-│
+GestureLink/
+├── assets/
+├── captures/
+├── controls/
+├── core/
+├── features/
+├── logs/
+├── ui/
+├── utils/
+├── web/
+│   ├── public/
+│   ├── src/
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+├── config.py
+├── main.py
 ├── requirements.txt
-│
-└── test_pure_js.js
+├── settings.json
+├── test_system.py
+├── run.bat
+├── Launch_GestureLink.bat
+└── README.md
+
+🚀 Live Demo
+
+🌐 "Click Here to Open GestureLink" (https://gesture-link-2ub9di1wh-nithishkumar1.vercel.app/)
+
+Explore the deployed web interface and its available features.
+
+💻 Installation and Setup
+
+Prerequisites
+
+- Python installed on your computer
+- Node.js and npm
+- A webcam for gesture-based features
+
+1. Clone the Repository
+
+git clone https://github.com/Nithishkumarcs/GestureLink-.git
+cd GestureLink-
+
+2. Install Python Dependencies
+
+pip install -r requirements.txt
+
+3. Run the Desktop Application
+
+python main.py
+
+4. Run the Web Application
+
+cd web
+npm install
+npm run dev
+
+Open the local URL displayed in your terminal.
+
+🧪 Testing
+
+Run the available test script from the project root:
+
+python test_system.py
+
+🔐 Privacy and Security
+
+- Request permission before accessing the webcam.
+- Avoid uploading private camera recordings.
+- Never commit API keys, passwords, or other secrets.
+- Review permissions before enabling desktop-control features.
+
+⚠️ Limitations
+
+- Gesture recognition depends on lighting and webcam quality.
+- The deployed website does not automatically control the computer's operating system.
+- System-wide mouse, keyboard, and application controls require a compatible local desktop application.
+- Supported functionality depends on the implemented code.
+
+🔮 Future Enhancements
+
+- Improve gesture recognition accuracy.
+- Add customizable gesture shortcuts.
+- Improve webcam calibration and sensitivity controls.
+- Expand accessibility features.
+- Add more testing and supported-device documentation.
+
+🤝 Contributing
+
+Suggestions, bug reports, and improvements are welcome. Please open a GitHub issue to discuss proposed changes.
+
+📄 License
+
+Refer to the repository's license file for the applicable terms.
+
+---
+
+GestureLink — A Step Towards Touchless Computer Interaction.
